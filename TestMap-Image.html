@@ -1,0 +1,102 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+crossorigin=""/>
+
+<style>
+#map { height: 100%; }
+</style>
+
+
+
+<div id="map"></div>
+
+
+
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+ integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+ crossorigin=""></script>
+
+ <script>
+
+// Styling
+var LeafIcon = L.Icon.extend({
+    options: {
+        //shadowUrl: 'leaf-shadow.png',
+        iconSize:     [28, 50],
+        //shadowSize:   [50, 64],
+        iconAnchor:   [18, 50],
+        //shadowAnchor: [4, 62],
+        popupAnchor:  [-3, -76]
+    }
+});
+
+var TownIcon = L.Icon.extend({
+    options: {
+        //shadowUrl: 'leaf-shadow.png',
+        iconSize:     [50, 50],
+        //shadowSize:   [50, 64],
+        iconAnchor:   [25, 25],
+        //shadowAnchor: [4, 62],
+        popupAnchor:  [0, -25]
+    }
+});
+
+var greenIcon = new LeafIcon({iconUrl: 'leaf-green.png'}),
+    redIcon = new LeafIcon({iconUrl: 'leaf-red.png'}),
+    orangeIcon = new LeafIcon({iconUrl: 'leaf-orange.png'})
+    townIcon = new TownIcon({iconUrl:'castle.png'});
+    villageIcon = new TownIcon({iconUrl:'medieval-house.png',iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-15]})
+    gazeboIcon = new TownIcon({iconUrl:'gazebo.png',iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-15]})
+
+
+
+//Basemap
+
+//var bounds = [[0,0], [2458,4096]];
+var bounds = [[0,0],[1339,2048]]
+//var image = L.imageOverlay('Rodinia_HQ.jpg', bounds).addTo(map);
+var image = L.imageOverlay('ImageMap.jpg', bounds)
+
+// Data
+
+const towns = L.layerGroup()
+const ofnote = L.layerGroup()
+
+var greenPt = L.marker([631, 332.25], {icon: townIcon}).bindTooltip("Notul").openTooltip().addTo(towns);
+var town1 = L.marker([564.5, 377.5], {icon:villageIcon}).bindTooltip("Osla").openTooltip().addTo(towns);
+var marketbridge = L.marker([535, 428],{icon:gazeboIcon}).bindTooltip("Market Bridge").openTooltip().addTo(ofnote);
+var tolaga = L.marker([467, 511], {icon:villageIcon}).bindTooltip("Tolaga").openTooltip().addTo(towns);
+
+// Map
+var map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -1,
+    layers: [image,towns,ofnote]
+});
+
+const baseMaps = {
+    "D'Nalgne": image
+};
+
+const overlayMaps = {
+    "Towns": towns,
+    "Places of Note": ofnote
+};
+
+const layerControl = L.control.layers(baseMaps,overlayMaps).addTo(map);
+
+map.fitBounds(bounds);
+
+var popup = L.popup();
+
+function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(map);
+    }
+
+map.on('click', onMapClick);
+
+ </script>
